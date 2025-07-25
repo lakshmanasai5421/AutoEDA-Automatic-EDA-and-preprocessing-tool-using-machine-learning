@@ -65,31 +65,4 @@ eda-cleaner-app/
 
 ---
 
-## How to Run It Locally
-
-1. **Clone the repo:**
-
-```bash
-git clone https://github.com/your-username/eda-cleaner-app.git
-cd eda-cleaner-app
-```
-
-2. **(Optional) Set up a virtual environment:**
-
-```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-```
-
-3. **Install the required packages:**
-
-```bash
-pip install flask pandas numpy scikit-learn
-```
-
-4. **Start the Flask app:**
-
-```bash
-python app.py
-```
 
