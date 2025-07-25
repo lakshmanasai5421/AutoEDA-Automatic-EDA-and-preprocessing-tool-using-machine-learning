@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSV Cleaner & EDA Tool</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      margin-top: 60px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    pre {
+      background: rgba(255,255,255,0.15);
+      padding: 12px;
+      border-radius: 10px;
+      color: #fff;
+      white-space: pre-wrap;
+    }
+    .btn-custom {
+      background-color: #ff6f61;
+      border: none;
+    }
+    .btn-custom:hover {
+      background-color: #ff3b2e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center mb-4">CSV Cleaner, EDA & ML Advisor</h2>
+    <form id="uploadForm">
+      <div class="mb-3">
+        <label for="file" class="form-label">Upload CSV File:</label>
+        <input type="file" class="form-control" id="file" name="file" accept=".csv" required>
+      </div>
+      <button type="submit" class="btn btn-custom">Analyze & Clean</button>
+    </form>
+
+    <div id="results" class="mt-4"></div>
+    <div id="downloadLink" class="mt-3"></div>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('file');
+      formData.append('file', fileInput.files[0]);
+
+      const res = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      const resultsDiv = document.getElementById('results');
+
+      if (data.error) {
+        resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        return;
+      }
+
+      resultsDiv.innerHTML = `
+        <h5>📊 Summary</h5>
+        <pre>${JSON.stringify(data.summary, null, 2)}</pre>
+
+        <h5>⚙️ Feature Scaling Suggestions</h5>
+        <pre>${JSON.stringify(data.scaling_suggestions, null, 2)}</pre>
+
+        <h5>🧩 Encoding Suggestions</h5>
+        <pre>${JSON.stringify(data.encoding_suggestions, null, 2)}</pre>
+
+        <h5>🤖 ML Algorithm Recommendations</h5>
+        <pre>${JSON.stringify(data.ml_recommendation, null, 2)}</pre>
+      `;
+
+      if (data.download_link) {
+        document.getElementById('downloadLink').innerHTML = `
+          <a href="${data.download_link}" class="btn btn-light" download>⬇️ Download Cleaned CSV</a>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
